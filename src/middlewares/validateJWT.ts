@@ -32,7 +32,6 @@ const validateJWT = (req: extendRequest, res: Response, next: NextFunction) => {
     };
     const user = await userModel.findOne({ email: jwtPayload.email });
     req.user = user;
-    console.log("jwt middle ware run");
     next();
   });
 };
