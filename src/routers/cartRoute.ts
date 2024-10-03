@@ -1,6 +1,7 @@
 import express from "express";
 import {
   addItemToCart,
+  checkout,
   clearCart,
   deleteItemInCart,
   getActiveCartForUser,
@@ -12,15 +13,18 @@ import { extendRequest } from "../types/extendRequest";
 const cartRouter = express.Router();
 
 cartRouter.get("/", validateJWT, async (req: extendRequest, res) => {
-  const userId = req.user._id;
-  const cart = await getActiveCartForUser({ userId });
-  res.status(200).send(cart);
+  try {
+    const userId = req.user._id;
+    const cart = await getActiveCartForUser({ userId });
+    res.status(200).send(cart);
+  } catch (error) {
+    res.status(500).send(error);
+  }
 });
 
 cartRouter.delete("/", validateJWT, async (req: extendRequest, res) => {
   try {
     const userId = req.user._id;
-
     const response = await clearCart({ userId });
     res.status(response.statusCode).send(response.data);
   } catch (error) {
@@ -68,5 +72,15 @@ cartRouter.delete(
     }
   }
 );
+
+cartRouter.post("/checkout", validateJWT, async (req: extendRequest, res) => {
+  try {
+    const userId = req.user._id;
+    const response = await checkout({ userId });
+    res.status(response.statusCode).send(response.data);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
 
 export default cartRouter;
