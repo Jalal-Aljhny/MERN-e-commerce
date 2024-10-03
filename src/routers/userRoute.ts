@@ -48,20 +48,37 @@ userRoute.post(
 
     return true;
   }),
+  body("address").custom((value) => {
+    if (!value) {
+      throw new Error("Address is required ");
+    }
+
+    return true;
+  }),
 
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      const errorsDetaile = errors.array().map((err) => err.msg);
-      return res.status(400).send({
-        error: {
-          message: `${errorsDetaile}`,
-        },
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        const errorsDetaile = errors.array().map((err) => err.msg);
+        return res.status(400).send({
+          error: {
+            message: `${errorsDetaile}`,
+          },
+        });
+      }
+      const { firstName, lastName, email, password, address } = req.body;
+      const result = await register({
+        firstName,
+        lastName,
+        email,
+        password,
+        address,
       });
+      res.status(result.statusCode).send(result.data);
+    } catch (error) {
+      res.status(500).send(error);
     }
-    const { firstName, lastName, email, password } = req.body;
-    const result = await register({ firstName, lastName, email, password });
-    res.status(result.statusCode).send(result.data);
   }
 );
 
@@ -86,18 +103,22 @@ userRoute.post(
   }),
 
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      const errorsDetaile = errors.array().map((err) => err.msg);
-      return res.status(400).send({
-        error: {
-          message: `${errorsDetaile}`,
-        },
-      });
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        const errorsDetaile = errors.array().map((err) => err.msg);
+        return res.status(400).send({
+          error: {
+            message: `${errorsDetaile}`,
+          },
+        });
+      }
+      const { email, password } = req.body;
+      const result = await login({ email, password });
+      res.status(result.statusCode).send(result.data);
+    } catch (error) {
+      res.status(500).send(error);
     }
-    const { email, password } = req.body;
-    const result = await login({ email, password });
-    res.status(result.statusCode).send(result.data);
   }
 );
 

@@ -8,6 +8,7 @@ interface RegisterDto {
   lastName: string;
   email: string;
   password: string;
+  address: string;
 }
 interface LoginDto {
   email: string;
@@ -22,6 +23,7 @@ export const register = async ({
   lastName,
   email,
   password,
+  address,
 }: RegisterDto) => {
   const findUser = await userModel.findOne({ email: email });
   if (findUser) {
@@ -36,6 +38,7 @@ export const register = async ({
     lastName,
     email,
     password: hasedPassword,
+    address,
   });
   await newUser.save();
 
