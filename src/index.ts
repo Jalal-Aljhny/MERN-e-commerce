@@ -6,11 +6,17 @@ import productRoute from "./routers/productRoute";
 import { seedInitialProducts } from "./services/productServices";
 import cartRouter from "./routers/cartRoute";
 dotenv.config();
+import cors from "cors";
 
 const app = express();
 const port = 5000;
 
 app.use(express.json());
+app.use(
+  cors({
+    origin: [`${process.env.FRONT_END_ORIGIN}`],
+  })
+);
 
 mongoose
   .connect(`${process.env.DB_URL}/ecommerce`)
